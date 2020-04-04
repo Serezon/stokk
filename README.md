@@ -1,11 +1,11 @@
 # Stokk
 
-Made for Wetelo React courses.
+Made for Wetelo React courses
+
 
 ## Setup
 
-Copy .env.example to env, then execute these commands one by one:
-(You need to have @adonisjs/cli installed)
+Copy .env.example to .env, then execute these commands one by one(You need to have @adonisjs/cli installed):
 
 ```bash
 
@@ -14,14 +14,9 @@ adonis migration:run
 
 ```
 
-### Start project
-Just run
 
-```bash
-
-adonis serve
-
-```
+## Start project
+Just run ```adonis serve ```
 
 # API:
 
