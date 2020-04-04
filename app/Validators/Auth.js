@@ -7,6 +7,13 @@ class AuthValidator {
       password: 'required'
     }
   }
+
+  get messages () {
+    return {
+      'username.required': 'Username is required',
+      'password.required': 'Password is required'
+    }
+  }
 }
 
 module.exports = AuthValidator

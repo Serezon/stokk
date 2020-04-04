@@ -1,6 +1,6 @@
 'use strict'
 
-class CaseStudyValidator {
+class CategoryValidator {
   get rules () {
     return {
       title: 'required'
@@ -8,4 +8,4 @@ class CaseStudyValidator {
   }
 }
 
-module.exports = CaseStudyValidator
+module.exports = CategoryValidator
