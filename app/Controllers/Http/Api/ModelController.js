@@ -21,13 +21,14 @@ class ModelController {
     const limit = request.input('limit', 10)
     const query = this.getQuery()
     const usersCount = await query.getCount()
-    const models = await query.offset(page * limit).limit(limit)
+    const models = await query.offset(page * limit)
+      .limit(limit)
     response.safeHeader('X-Total-Count', usersCount)
     return response.json(await this.mapModels(models))
   }
 
   async mapModels (models) {
-    const hidden = this.Model.hidden
+    const { hidden } = this.Model
     if (hidden && hidden.length > 0) {
       return models.map(model => {
         for (const attr of hidden) {
@@ -133,8 +134,11 @@ class ModelController {
     return response.json({ model: await this.prepareModel(model) })
   }
 
-  async beforeCreate () {}
-  async afterCreate () {}
+  async beforeCreate () {
+  }
+
+  async afterCreate () {
+  }
 
   /**
    * Update model
@@ -194,8 +198,11 @@ class ModelController {
     return response.json({ model: await this.prepareModel(model) })
   }
 
-  async beforeUpdate () {}
-  async afterUpdate () {}
+  async beforeUpdate () {
+  }
+
+  async afterUpdate () {
+  }
 
   async model ({ response, params }) {
     const model = await this.Model.find(params.id)
@@ -235,15 +242,17 @@ class ModelController {
   }
 
   async deleteMany ({ request, response }) {
-    let ids = request.input('ids', [])
+    const ids = request.input('ids', '')
+      .slice(1, -1)
+      .split(',')
     if (!ids.length) {
       return response.badRequest()
     }
-    const models = [];
+    const models = []
     for (const id of ids) {
       const model = await this.Model.find(id)
       if (model) {
-        await model.delete();
+        await model.delete()
         models.push(await this.prepareModel(model))
       }
     }

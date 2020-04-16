@@ -32,6 +32,27 @@ class CategoryController extends ModelController {
     return response.json(models)
   }
 
+  async getAll ({ request, response }) {
+    this.request = request
+    const orderBy = request.input('orderBy', 'id')
+    const order = request.input('order', 'asc')
+    const filter = request.input('filter', [])
+    const q = request.input('q', '')
+
+    let models = Category.query().clone()
+    if (filter.length) {
+      const queryList = filter.toString().slice(1, -1)
+      models = models.whereRaw(`id IN (${queryList})`).clone()
+    } else {
+      models = models.whereRaw(`title LIKE '%${q}%'`).clone()
+    }
+    models = await models
+      .orderBy(orderBy, order)
+      .fetch()
+
+    return response.json(models)
+  }
+
   async get ({ response, params }) {
     const model = await Category.find(params.id)
     return response.json({ model: await this.prepareModel(model) })
