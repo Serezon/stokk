@@ -48,7 +48,13 @@ class PostController extends ModelController {
       size: '50mb'
     }), user.id)
     formData.image = image || formData.image
-    const model = await Post.create(formData)
+    const created = await Post.create(formData)
+    const model = await Post
+      .query()
+      .with('category')
+      .with('img')
+      .where('id', created.id)
+      .first()
     return response.json({ model: await this.prepareModel(model) })
   }
 
@@ -67,7 +73,13 @@ class PostController extends ModelController {
       }
       await model.save()
     }
-    return response.json({ model: await this.prepareModel(model) })
+    const res = await Post
+      .query()
+      .with('category')
+      .with('img')
+      .where('id', params.id)
+      .first()
+    return response.json({ model: await this.prepareModel(res) })
   }
 
   async delete ({ params, response }) {
