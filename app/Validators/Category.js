@@ -6,6 +6,12 @@ class CategoryValidator {
       title: 'required'
     }
   }
+
+  get messages () {
+    return {
+      'title.required': 'Title is required'
+    }
+  }
 }
 
 module.exports = CategoryValidator

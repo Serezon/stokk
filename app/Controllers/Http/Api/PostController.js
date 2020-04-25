@@ -12,13 +12,14 @@ class PostController extends ModelController {
   async getData ({ request, response }) {
     this.request = request
     const page = request.input('page', 1)
-    const limit = request.input('limit', 3)
+    const limit = request.input('limit', 10)
     const orderBy = request.input('orderBy', 'id')
     const order = request.input('order', 'asc')
     const q = request.input('q', '')
 
     const models = await Post.query()
       .with('category')
+      .with('img')
       .whereRaw(`title LIKE '%${q}%'`)
       .orderBy(orderBy, order)
       .paginate(page, limit)
@@ -28,7 +29,12 @@ class PostController extends ModelController {
   }
 
   async get ({ response, params }) {
-    const model = await Post.find(params.id)
+    const model = await Post
+      .query()
+      .with('category')
+      .with('img')
+      .where('id', params.id)
+      .first()
     return response.json({ model: await this.prepareModel(model) })
   }
 
@@ -39,25 +45,23 @@ class PostController extends ModelController {
     const file = new File()
     const image = await file.saveFile(request.file('image', {
       types: ['image'],
-      size: '10mb'
+      size: '50mb'
     }), user.id)
     formData.image = image || formData.image
     const model = await Post.create(formData)
     return response.json({ model: await this.prepareModel(model) })
   }
 
-  async update ({ request, response, auth, params }) {
+  async update ({ request, response, params }) {
     const formData = request.only(Post.getFormDataList())
     const model = await Post.find(params.id)
     const file = new File()
     if (model) {
       const image = await file.saveFile(request.file('image', {
         types: ['image'],
-        size: '10mb'
+        size: '50mb'
       }), model.created_by)
-
       formData.image = image || model.image
-
       for (const key of Object.keys(formData)) {
         model[key] = formData[key]
       }
